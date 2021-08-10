@@ -1,7 +1,7 @@
 """Blogly application."""
 
 from flask import Flask, redirect, render_template, request, flash
-from models import db, connect_db, User
+from models import db, connect_db, User, DEFAULT_IMG_URL
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'YOUR_KEY_HERE'
@@ -47,3 +47,22 @@ def submit_create_form():
 def user_detail_view(user_id):
     user = User.query.get_or_404(user_id)
     return render_template('user-details.html', user=user)
+
+@app.route('/users/<int:user_id>/edit', methods=['GET'])
+def user_edit_view(user_id):
+    user = User.query.get_or_404(user_id)
+    image_path = user.image_url if user.image_url != DEFAULT_IMG_URL else ""
+    return render_template('edit-form.html', user=user, image_path=image_path)
+
+@app.route('/users/<int:user_id>/edit', methods=['POST'])
+def submit_edit_form(user_id):
+    user = User.query.get(user_id)
+
+    user.first_name = request.form['first-name'] if request.form['first-name'] else user.first_name
+    user.last_name = request.form['last-name'] if request.form['last-name'] else user.last_name
+    user.image_url = request.form['image-url'] if request.form['image-url'] else DEFAULT_IMG_URL
+
+    db.session.add(user)
+    db.session.commit()
+
+    return redirect(f'/users/{user_id}')

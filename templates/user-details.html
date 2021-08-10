@@ -6,7 +6,7 @@
 <div>
     <img src="{{user.image_url}}" alt="profile-image" width=100 height=100>
     <h2>{{user.first_name}} {{user.last_name}}</h2>
-    <button>Edit</button> <button>Delete</button>
+    <a href="/users/{{user.id}}/edit"><button>Edit</button></a> <button>Delete</button>
 </div>
 <br>
 <a href="/users">Return to user directory</a>
