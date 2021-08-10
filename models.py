@@ -28,7 +28,7 @@ class User(db.Model):
 
     image_url = db.Column(
         db.String,
-        default='no_url'
+        default=DEFAULT_IMG_URL
     )
 
     def __repr__(self):

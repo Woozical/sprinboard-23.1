@@ -21,11 +21,11 @@ def user_list_view():
     users = User.get_all()
     return render_template('list.html', users=users)
 
-@app.route('/create', methods=['GET'])
+@app.route('/users/new', methods=['GET'])
 def create_form_view():
     return render_template('create-form.html')
 
-@app.route('/create', methods=['POST'])
+@app.route('/users/new', methods=['POST'])
 def submit_create_form():
     first_name = request.form['first-name']
     last_name = request.form['last-name']
@@ -42,3 +42,8 @@ def submit_create_form():
         if not last_name:
             flash('Missing information in field "Last Name"')
         return redirect('/create')
+
+@app.route('/users/<int:user_id>')
+def user_detail_view(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('user-details.html', user=user)
