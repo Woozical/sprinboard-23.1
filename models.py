@@ -30,3 +30,10 @@ class User(db.Model):
         db.String,
         default=DEFAULT_IMG_URL
     )
+
+    def __repr__(self):
+        return f'<User ID={self.id} first_name={self.first_name} last_name={self.last_name}>'
+
+    @classmethod
+    def get_all(cls):
+        return cls.query.all()
