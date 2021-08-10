@@ -1,6 +1,6 @@
 """Blogly application."""
 
-from flask import Flask, redirect, render_template
+from flask import Flask, redirect, render_template, request, flash
 from models import db, connect_db, User
 
 app = Flask(__name__)
@@ -20,3 +20,25 @@ def home_view():
 def user_list_view():
     users = User.get_all()
     return render_template('list.html', users=users)
+
+@app.route('/create', methods=['GET'])
+def create_form_view():
+    return render_template('create-form.html')
+
+@app.route('/create', methods=['POST'])
+def submit_create_form():
+    first_name = request.form['first-name']
+    last_name = request.form['last-name']
+    image_url = request.form['image-url'] if request.form['image-url'] else None
+
+    if first_name and last_name:
+        new_user = User(first_name=first_name, last_name=last_name, image_url=image_url)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect('/users')
+    else:
+        if not first_name:
+            flash('Missing information in field "First Name"')
+        if not last_name:
+            flash('Missing information in field "Last Name"')
+        return redirect('/create')
