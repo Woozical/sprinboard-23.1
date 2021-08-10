@@ -28,6 +28,7 @@ class User(db.Model):
 
     image_url = db.Column(
         db.String,
+        nullable=False,
         default=DEFAULT_IMG_URL
     )
 
@@ -35,5 +36,12 @@ class User(db.Model):
         return f'<User ID={self.id} first_name={self.first_name} last_name={self.last_name}>'
 
     @classmethod
-    def get_all(cls):
-        return cls.query.all()
+    def get_all(cls, sorted=True):
+        return cls.query.order_by(cls.last_name, cls.first_name).all() if sorted else cls.query.all()
+    
+    def image_url_is_default(self):
+        return self.image_url == DEFAULT_IMG_URL
+    
+    @property
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
