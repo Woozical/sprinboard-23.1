@@ -84,8 +84,7 @@ def create_post_view(user_id):
     user = User.query.get(user_id)
     saved_content = session.get('FAILED_POST_CONTENT', '')
     saved_title = session.get('FAILED_POST_TITLE', '')
-    print('##### ######## ########### ############')
-    print(saved_title, saved_content)
+
     return render_template('create-post-form.html', user=user, saved_content=saved_content, saved_title=saved_title)
 
 @app.route('/users/<int:user_id>/posts/new', methods=['POST'])
