@@ -11,12 +11,16 @@
     </div>
     <br>
     <div class="text-muted align-self-end">
-        <i>Posted by: <a href="/users/{{post.poster.id}}">{{post.poster.full_name}}</a> on {{post.create_date}}</i>
+        <i class="post-sig">Posted by: <a href="/users/{{post.poster.id}}">{{post.poster.full_name}}</a> on {{post.create_date}}</i>
     </div>
     <br>
-    <a href="/posts/{{post.id}}/edit" class="btn btn-outline-primary btn-sm">Edit</a>
-    <button class="btn btn-outline-danger btn-sm">Delete</button>
-    <a href="/users" class="btn btn-outline-dark btn-sm">Return</a>
+    <form>
+        <div>
+        <button formmethod="GET" formaction="/posts/{{post.id}}/edit" class="form-control btn btn-outline-primary btn-sm">Edit</button>
+        <button formmethod="POST" formaction="/posts/{{post.id}}/delete" class="form-control btn btn-outline-danger btn-sm">Delete</button>
+        <button formmethod="GET" formaction="/users" class="form-control btn btn-outline-dark btn-sm">Return</button>
+        </div>
+    </form>
 </div>
 </div>
 {% endblock %}

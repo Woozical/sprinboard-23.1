@@ -141,6 +141,14 @@ def post_edit_submission(post_id):
 
     return redirect(f'/posts/{post.id}')
 
+@app.route('/posts/<int:post_id>/delete', methods=['POST'])
+def submit_delete_post(post_id):
+    query = Post.query.filter_by(id=post_id)
+    user_id = query.first().poster_id
+    query.delete()
+    db.session.commit()
+
+    return redirect(f'/users/{user_id}')
 
 def cookie_post_content(title='', content=''):
     """ Saves the data for a failed user post to the session cookie. If called without arguments, clears cached data."""

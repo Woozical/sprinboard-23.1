@@ -15,3 +15,11 @@
     margin-top: 0.2vh;
     width: max-content;
 }
+
+.post-sig{
+    margin-right: 5px;
+}
+
+.post-sig a{
+    text-decoration: none;
+}
