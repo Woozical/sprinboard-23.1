@@ -12,9 +12,16 @@ app.config['SQLALCHEMY_ECHO'] = True
 connect_db(app)
 db.create_all()
 
+@app.route('/recent')
+def recent_view():
+    query = Post.query.order_by(Post.created_at.desc())
+    query = query.limit(5)
+    posts = query.all()
+    return render_template('recent.html', posts=posts)
+
 @app.route('/')
 def home_view():
-    return redirect('/users')
+    return redirect('/recent')
 
 @app.route('/users')
 def user_list_view():

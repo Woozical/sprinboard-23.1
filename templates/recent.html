@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Blogly{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <h1 class="h1-center">Recent Posts</h1>
+    <br>
+    <div class="post-container">
+        {% for post in posts %}
+            <div class="card" style="width: 50vw">
+                <a class="no-decor" href="posts/{{post.id}}"><div class="card-header"><h5>
+                    {{post.title}}
+                </h5></div></a>
+                <div class="card-body">
+                    <p class="card-text">{{post.content}}</p>
+                </div>
+                <br>
+                <div class="text-muted align-self-end">
+                    <i class="post-sig">Posted by: <a href="/users/{{post.poster.id}}">{{post.poster.full_name}}</a> on {{post.create_date}}</i>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+    </div>
+</div>
+<script>
+    document.getElementById("nav-recent").classList.add('active')
+</script>
+{% endblock %}

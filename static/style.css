@@ -23,3 +23,18 @@
 .post-sig a{
     text-decoration: none;
 }
+
+.no-decor{
+    text-decoration: none;
+    color: black;
+    transition: color 250ms;
+}
+
+.no-decor:hover{
+    color: #4285F4
+}
+
+.h1-center{
+    margin-top: 1vh;
+    text-align: center;
+}
