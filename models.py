@@ -76,3 +76,7 @@ class Post(db.Model):
 
     def __repr__(self):
         return f'<Post ID {self.id} "{self.title[:6]}..." {self.created_at}>'
+
+    @property
+    def create_date(self):
+        return self.created_at.strftime("%B %d, %Y")

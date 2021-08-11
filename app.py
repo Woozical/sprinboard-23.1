@@ -1,7 +1,7 @@
 """Blogly application."""
 
 from flask import Flask, redirect, render_template, request, flash
-from models import db, connect_db, User, DEFAULT_IMG_URL
+from models import db, connect_db, User, DEFAULT_IMG_URL, Post
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'YOUR_KEY_HERE'
@@ -73,3 +73,8 @@ def submit_delete_user(user_id):
     db.session.commit()
 
     return redirect('/users')
+
+@app.route('/posts/<int:post_id>')
+def post_view(post_id):
+    post = Post.query.get(post_id)
+    return render_template('post.html', post=post)

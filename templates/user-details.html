@@ -8,6 +8,15 @@
     <h2>{{user.full_name}}</h2>
     <a href="/users/{{user.id}}/edit"><button>Edit</button></a>
     <form action="/users/{{user.id}}/delete" method="post"><button>Delete</button></form>
+    {% if user.posts %}
+    <h3>Posts</h3>
+    <ul>
+        {% for post in user.posts %}
+            <li><a href="/posts/{{post.id}}">{{post.title}}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <button>Add Post</button>
 </div>
 <br>
 <a href="/users">Return to user directory</a>
