@@ -33,6 +33,8 @@ class User(db.Model):
         default=DEFAULT_IMG_URL
     )
 
+    posts = db.relationship('Post', backref='poster')
+
     def __repr__(self):
         return f'<User ID={self.id} first_name={self.first_name} last_name={self.last_name}>'
 
@@ -65,7 +67,7 @@ class Post(db.Model):
 
     created_at = db.Column(
         db.TIMESTAMP, nullable=False,
-        default= datetime.datetime.now()
+        default= datetime.datetime.now
     )
 
     poster_id = db.Column(

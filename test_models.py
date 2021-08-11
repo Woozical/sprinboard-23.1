@@ -80,3 +80,4 @@ class PostModelTestCase(TestCase):
         db.session.commit()
 
         self.assertNotEqual(time_marker, new_post.created_at)
+        self.assertNotEqual(new_post.created_at, setup_post.created_at)
