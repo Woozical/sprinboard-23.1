@@ -1,6 +1,6 @@
 """Blogly application."""
 
-from flask import Flask, redirect, render_template, request, flash
+from flask import Flask, redirect, render_template, request, flash, session
 from models import db, connect_db, User, DEFAULT_IMG_URL, Post
 
 app = Flask(__name__)
@@ -82,5 +82,41 @@ def post_view(post_id):
 @app.route('/users/<int:user_id>/posts/new', methods=['GET'])
 def create_post_view(user_id):
     user = User.query.get(user_id)
+    saved_content = session.get('FAILED_POST_CONTENT', '')
+    saved_title = session.get('FAILED_POST_TITLE', '')
+    print('##### ######## ########### ############')
+    print(saved_title, saved_content)
+    return render_template('create-post-form.html', user=user, saved_content=saved_content, saved_title=saved_title)
 
-    return render_template('create-post-form.html', user=user)
+@app.route('/users/<int:user_id>/posts/new', methods=['POST'])
+def submit_post_form(user_id):
+    title = request.form['post-title'] if request.form['post-title'] else ''
+    content = request.form['post-content'] if request.form['post-content'] else ''
+
+    if title and content:
+        new_post = Post(title=title, content=content, poster_id=user_id)
+        db.session.add(new_post)
+
+        try:
+            db.session.commit()
+            cookie_post_content() # Clear from session cookie
+            return redirect(f'/posts/{new_post.id}')
+        except:
+            flash('An error occured when saving your post. Please try again later.')
+            cookie_post_content(title,content)
+            return redirect(f'/users/{user_id}')
+    
+    else:
+        if not title:
+            flash('Missing Post Title')
+        if not content:
+            flash('Missing Post Content')
+        
+        cookie_post_content(title, content)
+        return redirect(f'/users/{user_id}/posts/new')
+
+
+def cookie_post_content(title='', content=''):
+    """ Saves the data for a failed user post to the session cookie. If called without arguments, clears cached data."""
+    session['FAILED_POST_TITLE'] = title
+    session['FAILED_POST_CONTENT'] = content
