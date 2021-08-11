@@ -1,0 +1,11 @@
+.submission-form{
+    padding: 5%;
+}
+
+.post-container{
+    display: flex;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+    align-items: center;
+    flex-direction: column;
+}

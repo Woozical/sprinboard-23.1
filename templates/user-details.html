@@ -3,21 +3,42 @@
 {% block title %}User - {{user.full_name}}{% endblock %}
 
 {% block content %}
-<div>
-    <img src="{{user.image_url}}" alt="profile-image" width=100 height=100>
-    <h2>{{user.full_name}}</h2>
-    <a href="/users/{{user.id}}/edit"><button>Edit</button></a>
-    <form action="/users/{{user.id}}/delete" method="post"><button>Delete</button></form>
-    {% if user.posts %}
-    <h3>Posts</h3>
-    <ul>
-        {% for post in user.posts %}
-            <li><a href="/posts/{{post.id}}">{{post.title}}</a></li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    <button>Add Post</button>
+<div class="container">
+    <div class="row">
+
+    <div class="col-sm-2 col-6">
+        <img src="{{user.image_url}}" alt="profile-image" class="img-fluid">
+    </div>
+
+    <div class="col-sm-10 col-12"   >
+        <h2>{{user.full_name}}</h2>
+        <form>
+            <button class="btn btn-primary btn-sm"
+            formaction="/users/{{user.id}}/edit"
+            formmethod="GET">
+                Edit
+            </button>
+            <button class="btn btn-danger btn-sm"
+            formaction=/users/{{user.id}}/delete
+            formmethod="POST">
+                Delete
+            </button>
+        </form>
+        
+        {% if user.posts %}
+        <h3 class="mt-4">Posts</h3>
+        <ul>
+            {% for post in user.posts %}
+                <li><a href="/posts/{{post.id}}">{{post.title}}</a>
+                    <small>{{ post.create_date}}</small>
+                </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <br>
+        <a href="/users/{{user.id}}/posts/new" class="btn btn-primary">Add Post</a>
+        <a href="/users" class="btn btn-outline-secondary">Return</a>
+    </div>
+    </div>
 </div>
-<br>
-<a href="/users">Return to user directory</a>
 {% endblock %}

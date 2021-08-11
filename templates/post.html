@@ -3,7 +3,19 @@
 {% block title %}{{post.title}}{% endblock %}
 
 {% block content %}
-    <h1>{{post.title}}</h1>
-    <p>{{post.content}}</p>
-    <i>Posted by: {{post.poster.full_name}} on {{post.create_date}}</i>
+<div class="post-container">
+<div class="card" style="width: 50vw">
+    <div class="card-header"><h5>{{post.title}}</h5></div>
+    <div class="card-body">
+        <p class="card-text">{{post.content}}</p>
+    </div>
+    <br>
+    <div class="text-muted align-self-end">
+        <i>Posted by: <a href="/users/{{post.poster.id}}">{{post.poster.full_name}}</a> on {{post.create_date}}</i>
+    </div>
+    <br>
+    <button class="btn btn-outline-primary btn-sm">Edit</button>
+    <button class="btn btn-outline-danger btn-sm">Delete</button>
+</div>
+</div>
 {% endblock %}

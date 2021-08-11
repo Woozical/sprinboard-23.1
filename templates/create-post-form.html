@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Create New Post{% endblock %}
+
+{% block content %}
+<div class="container">
+<form action="/users/{{user.id}}/posts/new" method="POST" class="submission-form">
+    <h1>Add Post for {{user.full_name}}</h1>
+    <hr>
+<div class="form-group">
+    <label for="post-title" class="form-label">Title</label>
+    <input class="form-control" type="text" name="post-title" placeholder="First Post!">
+</div>
+<div class="form-group">
+    <label for="post-content" class="form-label">Post Content</label>
+    <textarea class="form-control" name="post-content" cols="30" rows="10" placeholder="Hello World!"></textarea>
+</div>
+<br>
+<a href="/users/{{user.id}}"><button type="button" class="btn btn-outline-secondary">Cancel</button></a></button>
+<button class="btn btn-primary">Post</button>
+</form>
+</div> 
+{% endblock %}

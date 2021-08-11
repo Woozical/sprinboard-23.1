@@ -78,3 +78,9 @@ def submit_delete_user(user_id):
 def post_view(post_id):
     post = Post.query.get(post_id)
     return render_template('post.html', post=post)
+
+@app.route('/users/<int:user_id>/posts/new', methods=['GET'])
+def create_post_view(user_id):
+    user = User.query.get(user_id)
+
+    return render_template('create-post-form.html', user=user)
