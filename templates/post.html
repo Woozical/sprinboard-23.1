@@ -14,8 +14,9 @@
         <i>Posted by: <a href="/users/{{post.poster.id}}">{{post.poster.full_name}}</a> on {{post.create_date}}</i>
     </div>
     <br>
-    <button class="btn btn-outline-primary btn-sm">Edit</button>
+    <a href="/posts/{{post.id}}/edit" class="btn btn-outline-primary btn-sm">Edit</a>
     <button class="btn btn-outline-danger btn-sm">Delete</button>
+    <a href="/users" class="btn btn-outline-dark btn-sm">Return</a>
 </div>
 </div>
 {% endblock %}

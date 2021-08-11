@@ -38,10 +38,10 @@ def submit_create_form():
         return redirect('/users')
     else:
         if not first_name:
-            flash('Missing information in field "First Name"')
+            flash('Missing information in field "First Name"', 'warning')
         if not last_name:
-            flash('Missing information in field "Last Name"')
-        return redirect('/create')
+            flash('Missing information in field "Last Name"', 'warning')
+        return redirect('/users/new')
 
 @app.route('/users/<int:user_id>')
 def user_detail_view(user_id):
@@ -102,18 +102,44 @@ def submit_post_form(user_id):
             cookie_post_content() # Clear from session cookie
             return redirect(f'/posts/{new_post.id}')
         except:
-            flash('An error occured when saving your post. Please try again later.')
+            flash('An error occured when saving your post. Please try again later.', 'danger')
             cookie_post_content(title,content)
             return redirect(f'/users/{user_id}')
     
     else:
         if not title:
-            flash('Missing Post Title')
+            flash('Missing Post Title', 'warning')
         if not content:
-            flash('Missing Post Content')
+            flash('Missing Post Content', 'warning')
         
         cookie_post_content(title, content)
         return redirect(f'/users/{user_id}/posts/new')
+
+
+@app.route('/posts/<int:post_id>/edit', methods=['GET'])
+def post_edit_form_view(post_id):
+    post = Post.query.get(post_id)
+    return render_template('edit-post-form.html', post=post)
+
+@app.route('/posts/<int:post_id>/edit', methods=['POST'])
+def post_edit_submission(post_id):
+    post = Post.query.get(post_id)
+
+    if request.form['post-title']:
+        post.title = request.form['post-title']
+    else:
+        flash('Post titles are required. The previous title was kept.', 'info')
+
+    if request.form['post-content']:
+        post.content = request.form['post-content']
+    else:
+        flash('Post content body is required. Previous post content was kept.', 'info')
+        
+
+    db.session.add(post)
+    db.session.commit()
+
+    return redirect(f'/posts/{post.id}')
 
 
 def cookie_post_content(title='', content=''):
