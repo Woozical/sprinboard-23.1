@@ -32,6 +32,16 @@ def user_list_view():
     users = User.get_all()
     return render_template('list.html', users=users)
 
+@app.route('/tags')
+def tag_list_view():
+    tags = Tag.get_all()
+    return render_template('tag-list.html', tags=tags)
+
+@app.route('/tags/<int:tag_id>')
+def tag_detail_view(tag_id):
+    tag = Tag.query.get(tag_id)
+    return render_template('tag-detail.html', tag=tag)
+
 @app.route('/users/new', methods=['GET'])
 def create_form_view():
     return render_template('create-form.html')
@@ -171,7 +181,12 @@ def post_edit_submission(post_id):
             post.tags.append(tag)
 
     db.session.add(post)
-    db.session.commit()
+    
+    try:
+        db.session.commit()
+    except:
+        flash('An error occured when saving your post. Please try again later.', 'danger')
+        db.session.rollback()
 
     return redirect(f'/posts/{post.id}')
 

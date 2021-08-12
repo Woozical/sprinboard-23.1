@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Tag - {{tag.name.title()}}{% endblock %}
+{% block content %}
+<div class="container view50">
+    <div class="d-flex justify-content-between">
+    <h1 class="h1-center">{{tag.name.title()}}
+        <small class="text-muted">
+            ({{tag.post_count}})
+        </small>
+    </h1>
+    <div class="align-self-end">
+    <a class="btn btn-sm btn-primary" href="/tags/{{tag.id}}/edit">Edit</a>
+    <a class="btn btn-sm btn-danger" href="/tags/{{tag.id}}/delete">Delete</a>
+    <a class="btn btn-sm btn-outline-secondary" href="/tags">Return</a>
+    </div>
+    </div>
+    <hr>
+    {% if tag.posts %}
+    <h4>Posts:</h4>
+    <ul class="list-group">
+        {% for post in tag.posts %}
+        {% if loop.index % 2 != 0 %}
+        <li class="list-group-item list-group-item d-flex justify-content-between align-items-center">
+            <a class="no-decor" href="/posts/{{post.id}}">{{post.title}}</a>
+            <small class="text-muted">
+                Posted by: {{post.poster.full_name}} on {{post.create_date}}
+            </small>
+        </li>
+        {% else %}
+        <li class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center">
+            <a class="no-decor" href="/posts/{{post.id}}">{{post.title}}</a>
+            <small class="text-muted">
+                Posted by: {{post.poster.full_name}} on {{post.create_date}}
+            </small>
+        </li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endblock %}

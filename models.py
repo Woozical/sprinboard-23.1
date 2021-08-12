@@ -110,6 +110,14 @@ class Tag(db.Model):
     def __repr__(self):
         return f"<Tag ID{self.id} {self.name}>"
 
+    @classmethod
+    def get_all(cls, sorted=True):
+        return cls.query.order_by(cls.name).all() if sorted else cls.query.all()
+
+    @property
+    def post_count(self):
+        return len(self.posts)
+
 class PostTag(db.Model):
     __tablename__ = "posts_tags"
 
