@@ -151,6 +151,18 @@ class PostViewsTestCase(TestCase):
             self.assertIn('Lorem ipsum dolor', html)
             self.assertIn('John Doe', html)
 
+    def test_deleted_user_post_view(self):
+        with app.test_client() as client:
+            User.query.filter_by(id=self.user_id).delete()
+            
+            res=client.get(f'/posts/{self.post_id}')
+            html = res.get_data(as_text=True)
+
+            self.assertEqual(res.status_code, 200)
+            self.assertIn('Day at the Zoo', html)
+            self.assertIn('Lorem ipsum dolor', html)
+            self.assertIn('deleted user', html)
+
     def test_post_edit_form_view(self):
         with app.test_client() as client:
             res = client.get(f'/posts/{self.post_id}/edit')

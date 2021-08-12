@@ -18,7 +18,11 @@
                 </div>
                 <br>
                 <div class="text-muted align-self-end">
+                    {% if post.poster %}
                     <i class="post-sig">Posted by: <a href="/users/{{post.poster.id}}">{{post.poster.full_name}}</a> on {{post.create_date}}</i>
+                    {% else %}
+                    <i class="post-sig">Posted by: [deleted user] on {{post.create_date}}</i>
+                    {% endif %}
                 </div>
             </div>
             <br>
