@@ -3,9 +3,9 @@
 {% block title %}Create New Post{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container view50">
 <form action="/users/{{user.id}}/posts/new" method="POST" class="submission-form">
-    <h1>Add Post for {{user.full_name}}</h1>
+    <h1 class="h1-center">Add Post for {{user.full_name}}</h1>
     <hr>
     <div class="form-group">
         <label for="post-title" class="form-label">Title</label>
@@ -14,6 +14,11 @@
     <div class="form-group">
         <label for="post-content" class="form-label">Post Content</label>
         <textarea class="form-control" name="post-content" cols="30" rows="10" placeholder="Hello World!">{{saved_content}}</textarea>
+    </div>
+    <div class="form-group">
+        <label for="post-tags" class="form-label">Tags</label>
+        <input class="form-control" type="text" name="post-tags" placeholder="pets, summer, etc.">
+        <small class="form-text text-muted">Separate tags with commas</small>
     </div>
     <br>
     <a href="/users/{{user.id}}" class="btn btn-outline-secondary">Cancel</a>

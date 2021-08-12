@@ -101,8 +101,20 @@ def submit_post_form(user_id):
 
     if title and content:
         new_post = Post(title=title, content=content, poster_id=user_id)
-        db.session.add(new_post)
+        
 
+        if request.form['post-tags']:
+            # Split and clean whitespace off tags
+            tag_list = request.form['post-tags'].split(',')
+            for i in range(len(tag_list)):
+                tag_list[i] = " ".join(tag_list[i].split())
+            
+            # Append Tags to the Post object
+            for tag in create_tags(list(set(tag_list))):
+                new_post.tags.append(tag)
+
+            
+        db.session.add(new_post)
         try:
             db.session.commit()
             cookie_post_content() # Clear from session cookie
@@ -110,6 +122,7 @@ def submit_post_form(user_id):
         except:
             flash('An error occured when saving your post. Please try again later.', 'danger')
             cookie_post_content(title,content)
+            db.session.rollback()
             return redirect(f'/users/{user_id}')
     
     else:
@@ -160,3 +173,24 @@ def cookie_post_content(title='', content=''):
     """ Saves the data for a failed user post to the session cookie. If called without arguments, clears cached data."""
     session['FAILED_POST_TITLE'] = title
     session['FAILED_POST_CONTENT'] = content
+
+def create_tags(tag_names):
+    """Accepts a list of strings, each element being a new tag.
+    Will search for tags that already exist with that name in the DB
+    Returns a list of Tag Model objects"""
+    output = []
+    existing_tags = db.session.query(Tag.name, Tag).filter(Tag.name.in_(tag_names)).all()
+    tag_dict = {}
+
+    # Split list of tuples into two lists
+    for name, obj in existing_tags:
+        tag_dict[name] = obj
+    
+    for i in range(len(tag_names)):
+        if tag_names[i] in tag_dict.keys():
+            output.append( tag_dict[tag_names[i]] )
+        else:
+            new_tag = Tag(name=tag_names[i])
+            output.append(new_tag)
+
+    return output

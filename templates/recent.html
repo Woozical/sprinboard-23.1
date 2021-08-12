@@ -24,6 +24,17 @@
                     <i class="post-sig">Posted by: [deleted user] on {{post.create_date}}</i>
                     {% endif %}
                 </div>
+                <div class='card-footer'>
+                    <small class="text-muted">Tags:
+                        {% if post.tags %}
+                        {% for tag in post.tags %}
+                            <a href="#">{{tag.name}}</a>{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </small>
+                </div>
             </div>
             <br>
         {% endfor %}
