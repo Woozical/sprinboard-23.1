@@ -39,12 +39,3 @@
     document.getElementById("nav-tags").classList.add('active')
 </script>
 {% endblock %}
-
-{% block edit_and_delete %}
-<form>
-    <a class="btn btn-primary btn-sm" href="/tags/{{tag.id}}/edit">Edit</a>
-    <button class="btn btn-danger btn-sm"
-    formmethod="POST"
-    formaction="/tags/{{tag.id}}/delete">Delete</button>
-    </form>
-{% endblock %}
