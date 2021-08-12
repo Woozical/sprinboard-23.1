@@ -3,6 +3,10 @@
 from flask import Flask, redirect, render_template, request, flash, session
 from models import db, connect_db, User, DEFAULT_IMG_URL, Post, Tag, PostTag
 
+FORBIDDEN_TAG_CHARS = [
+    "!","@",'#','$','%','^','('
+]
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'YOUR_KEY_HERE'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
@@ -83,12 +87,12 @@ def submit_delete_user(user_id):
 
 @app.route('/posts/<int:post_id>')
 def post_view(post_id):
-    post = Post.query.get(post_id)
+    post = Post.query.get_or_404(post_id)
     return render_template('post.html', post=post)
 
 @app.route('/users/<int:user_id>/posts/new', methods=['GET'])
 def create_post_view(user_id):
-    user = User.query.get(user_id)
+    user = User.query.get_or_404(user_id)
     saved_content = session.get('FAILED_POST_CONTENT', '')
     saved_title = session.get('FAILED_POST_TITLE', '')
 
@@ -101,18 +105,14 @@ def submit_post_form(user_id):
 
     if title and content:
         new_post = Post(title=title, content=content, poster_id=user_id)
-        
 
         if request.form['post-tags']:
-            # Split and clean whitespace off tags
-            tag_list = request.form['post-tags'].split(',')
-            for i in range(len(tag_list)):
-                tag_list[i] = " ".join(tag_list[i].split())
+            # Clean input
+            tag_list = trim_tag_input_string(request.form['post-tags'])
             
             # Append Tags to the Post object
-            for tag in create_tags(list(set(tag_list))):
+            for tag in create_tags(tag_list):
                 new_post.tags.append(tag)
-
             
         db.session.add(new_post)
         try:
@@ -137,7 +137,7 @@ def submit_post_form(user_id):
 
 @app.route('/posts/<int:post_id>/edit', methods=['GET'])
 def post_edit_form_view(post_id):
-    post = Post.query.get(post_id)
+    post = Post.query.get_or_404(post_id)
     return render_template('edit-post-form.html', post=post)
 
 @app.route('/posts/<int:post_id>/edit', methods=['POST'])
@@ -154,6 +154,21 @@ def post_edit_submission(post_id):
     else:
         flash('Post content body is required. Previous post content was kept.', 'info')
         
+
+    # tags
+    if not request.form['post-tags']:
+        PostTag.query.filter_by(post_id=post_id).delete()
+    else:
+        tag_list = trim_tag_input_string(request.form['post-tags'])
+
+        # Delete tags from post that are now missing from edit input
+        missing_ids = [x[0] for x in db.session.query(Tag.id).filter(Tag.name.notin_(tag_list)).all()]
+
+        PostTag.query.filter((PostTag.post_id == post_id), (PostTag.tag_id.in_(missing_ids))).delete()
+
+        # tag additions
+        for tag in create_tags(tag_list):
+            post.tags.append(tag)
 
     db.session.add(post)
     db.session.commit()
@@ -194,3 +209,22 @@ def create_tags(tag_names):
             output.append(new_tag)
 
     return output
+
+def trim_tag_input_string(input_str):
+
+    string = "".join(
+        [char for char in input_str if char.isalnum() or char == "," or char == " "]
+    )
+    #lowercase and strip trailing commas and whitespace
+    string = string.lower().strip(", ")
+    # split each tag
+    tag_list = string.split(',')
+
+    # Remove excess whitespace within each tag
+    tag_list = [" ".join(tag_list[i].split()) for i in range(len(tag_list))]
+
+    #remove duplicates, remove empty string that may have slipped through
+    tag_list = set(tag_list)
+    if '' in tag_list: tag_list.remove('')
+    tag_list = list(tag_list)
+    return tag_list

@@ -84,7 +84,16 @@ class Post(db.Model):
     def create_date(self):
         """Returns a string in a date format (e.g. Aug 10, 2011)"""
         return self.created_at.strftime("%B %d, %Y")
-    
+
+    @property
+    def tags_as_string(self):
+        output = ""
+        if self.tags:
+            for tag in self.tags:
+                output = output + tag.name + ", "
+        
+        return output.rstrip(", ")
+
 class Tag(db.Model):
     __tablename__ = "tags"
 

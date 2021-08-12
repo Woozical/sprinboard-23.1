@@ -3,7 +3,7 @@
 {% block title %}Edit Post{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container view50">
 <form action="/posts/{{post.id}}/edit" method="POST" class="submission-form">
     <h1>Edit Post</h1>
     <hr>
@@ -18,10 +18,15 @@
     </div>
     <br>
     <div class="form-group">
+        <label for="post-tags", class="form-label">Tags</label>
+        <input class="form-control" name="post-tags" type="text" value="{{post.tags_as_string}}">
+        <small class="form-text text-muted">Separate tags with commas. Non-alphanumeric characters will be removed.</small>
+    </div>
+    <br>
+    <div class="form-group">
         <a href="/posts/{{post.id}}" class="btn btn-outline-secondary">Cancel</a>
         <button type="submit" class="btn btn-success">Save</button>
     </div>
-      
 </form>
 </div>
 {% endblock %}
