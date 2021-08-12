@@ -1,4 +1,4 @@
-from models import db, Post, User
+from models import db, Post, User, Tag, PostTag
 from app import app
 from random import randint
 
@@ -26,7 +26,28 @@ posts = [
     Post(title='Teaching my cat how to skateboard', content="Everyone thought I was crazy, but I finally did it. Who's laughing now, huh?", poster_id=randint(1, len(users)))
 ]
 
+tags = [
+    Tag(name="winning"), Tag(name='pets'), Tag(name='summer'), Tag(name='science'), Tag(name='video games')
+]
+
 db.session.add_all(users)
 db.session.commit()
 db.session.add_all(posts)
+db.session.commit()
+db.session.add_all(tags)
+db.session.commit()
+
+posts[0].tags.append(tags[1])
+posts[2].tags.append(tags[2])
+posts[3].tags.append(tags[3])
+posts[4].tags.append(tags[1])
+posts[4].tags.append(tags[2])
+posts[5].tags.append(tags[4])
+posts[6].tags.append(tags[2])
+posts[6].tags.append(tags[0])
+posts[7].tags.append(tags[0])
+posts[7].tags.append(tags[1])
+
+db.session.add_all(posts)
+
 db.session.commit()

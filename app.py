@@ -1,7 +1,7 @@
 """Blogly application."""
 
 from flask import Flask, redirect, render_template, request, flash, session
-from models import db, connect_db, User, DEFAULT_IMG_URL, Post
+from models import db, connect_db, User, DEFAULT_IMG_URL, Post, Tag, PostTag
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'YOUR_KEY_HERE'

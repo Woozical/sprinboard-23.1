@@ -1,6 +1,6 @@
 from unittest import TestCase
 from app import app
-from models import db, User, DEFAULT_IMG_URL, Post
+from models import db, User, DEFAULT_IMG_URL, Post, Tag, PostTag
 import time, datetime
 
 # Perform tests on a Test database
@@ -16,6 +16,7 @@ class UserModelTestCase(TestCase):
         """Delete any leftover database entries"""
         Post.query.delete()
         User.query.delete()
+        Tag.query.delete()
 
     def tearDown(self):
         """Clean up fouled transactions"""
@@ -51,6 +52,7 @@ class PostModelTestCase(TestCase):
         """Delete leftover DB entries and make a new entry, cache ID and timestamp"""
         Post.query.delete()
         User.query.delete()
+        Tag.query.delete()
         
         user = User(first_name="John", last_name="Doe")
         db.session.add(user)
@@ -81,3 +83,53 @@ class PostModelTestCase(TestCase):
 
         self.assertNotEqual(time_marker, new_post.created_at)
         self.assertNotEqual(new_post.created_at, setup_post.created_at)
+
+class PostTagModelTestCase(TestCase):
+
+    def setUp(self):
+        Post.query.delete()
+        User.query.delete()
+        Tag.query.delete()
+
+        user = User(first_name="John", last_name="Doe")
+        db.session.add(user)
+        db.session.commit()
+        
+        post = Post(title="My kitten", content="Look at my kitten, ain't she cute?", poster_id=user.id)
+        db.session.add(post)
+        db.session.commit()
+
+        tag1 = Tag(name="pets")
+        tag2 = Tag(name="winning")
+
+        db.session.add_all([tag1, tag2])
+        db.session.commit()
+
+        self.user_id = user.id
+        self.post_id = post.id
+        self.tag1_id = tag1.id
+        self.tag2_id = tag2.id
+
+    def tearDown(self):
+        db.session.rollback()
+
+    def test_posts_relationship(self):
+        ## Adding
+        post = Post.query.get(self.post_id)
+        tag1 = Tag.query.get(self.tag1_id)
+        tag2 = Tag.query.get(self.tag2_id)
+
+        post.tags.append(tag1)
+        post.tags.append(tag2)
+        db.session.add(post)
+        db.session.commit()
+
+        self.assertIn(tag1, post.tags)
+        self.assertIn(tag2, post.tags)
+
+        ## Deletion cascade
+        Tag.query.filter_by(id=self.tag1_id).delete()
+        db.session.commit()
+
+        self.assertNotIn(tag1, post.tags)
+        self.assertIn(tag2, post.tags)

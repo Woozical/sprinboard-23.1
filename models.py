@@ -71,12 +71,44 @@ class Post(db.Model):
     )
 
     poster_id = db.Column(
-        db.Integer, db.ForeignKey('users.id'), nullable=False
+        db.Integer, db.ForeignKey('users.id', ondelete="SET NULL")
     )
 
     def __repr__(self):
-        return f'<Post ID {self.id} "{self.title[:6]}..." {self.created_at}>'
+        if len(self.title) > 11:
+            return f'<Post ID {self.id} "{self.title[:11]}..." {self.created_at}>'
+        else:
+            return f'<Post ID {self.id} "{self.title} {self.created_at}>'
 
     @property
     def create_date(self):
+        """Returns a string in a date format (e.g. Aug 10, 2011)"""
         return self.created_at.strftime("%B %d, %Y")
+    
+class Tag(db.Model):
+    __tablename__ = "tags"
+
+    id = db.Column(
+        db.Integer, primary_key=True, autoincrement=True
+    )
+
+    name = db.Column(
+        db.String(12), nullable=False, unique=True
+    )
+
+    posts = db.relationship('Post', secondary='posts_tags', backref='tags')
+
+    def __repr__(self):
+        return f"<Tag ID{self.id} {self.name}>"
+
+class PostTag(db.Model):
+    __tablename__ = "posts_tags"
+
+    post_id = db.Column(
+        db.Integer, db.ForeignKey("posts.id", ondelete="CASCADE"), primary_key=True
+    )
+
+    tag_id = db.Column(
+        db.Integer, db.ForeignKey("tags.id", ondelete="CASCADE"), primary_key=True
+    )
+
