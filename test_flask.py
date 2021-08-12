@@ -1,6 +1,6 @@
 from unittest import TestCase
 from app import app
-from models import User, db, Post
+from models import User, db, Post, Tag, PostTag
 
 # Perform tests on a Test database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly_test'
@@ -90,6 +90,7 @@ class UserViewsTestCase(TestCase):
 class PostViewsTestCase(TestCase):
     def setUp(self):
         # Clear leftover entries
+        Tag.query.delete()
         Post.query.delete()
         User.query.delete()
         # New sample entries
@@ -116,25 +117,29 @@ class PostViewsTestCase(TestCase):
 
             self.assertEqual(res.status_code, 200)
             self.assertIn(f'form action="/users/{self.user_id}/posts/new" method="POST"', html)
-            self.assertIn('<h1>Add Post for John Doe</h1>', html)
+            self.assertIn('Add Post for John Doe', html)
 
     def test_new_post_submission(self):
         with app.test_client() as client:
-            data = {'post-title': 'My Newest Post', 'post-content': 'Ladee-da-dee-dah'}
+            data = {'post-title': 'My Newest Post', 'post-content': 'Ladee-da-dee-dah', 'post-tags': 'beatles&,   lyrics    '}
             res = client.post(f'/users/{self.user_id}/posts/new', data=data, follow_redirects=True)
             html = res.get_data(as_text=True)
 
             self.assertEqual(res.status_code, 200)
             self.assertIn('My Newest Post', html)
             self.assertIn('John Doe', html)
+            self.assertIn('beatles', html)
+            self.assertIn('lyrics', html)
 
             posts = Post.query.filter_by(title='My Newest Post').all()
-
             self.assertNotEqual(posts, [])
+
+            tags = Tag.query.all()
+            self.assertEqual(len(tags), 2)
 
     def test_failed_new_post_submisssion(self):
         with app.test_client() as client:
-            data = {'post-title': '', 'post-content': 'oainrgoairnhae'}
+            data = {'post-title': '', 'post-content': 'oainrgoairnhae', 'post-tags': ''}
             res = client.post(f'/users/{self.user_id}/posts/new', data=data, follow_redirects=True)
             html = res.get_data(as_text=True)
 
@@ -173,13 +178,15 @@ class PostViewsTestCase(TestCase):
 
     def test_edit_post_submission(self):
         with app.test_client() as client:
-            data = {'post-title': 'New Title', 'post-content': 'New Content'}
+            data = {'post-title': 'New Title', 'post-content': 'New Content', 'post-tags': 'la-dee-da and, things'}
             res = client.post(f'/posts/{self.post_id}/edit', data=data, follow_redirects=True)
             html = res.get_data(as_text=True)
 
             self.assertEqual(res.status_code, 200)
             self.assertIn('New Title', html)
             self.assertIn('New Content', html)
+            self.assertIn('ladeeda', html)
+            self.assertIn('things', html)
 
             post = Post.query.get(self.post_id)
             self.assertEqual(post.title, 'New Title')
@@ -187,7 +194,7 @@ class PostViewsTestCase(TestCase):
 
     def test_failed_edit_submission(self):
         with app.test_client() as client:
-            data = {'post-title': '', 'post-content':''}
+            data = {'post-title': '', 'post-content':'', 'post-tags': ''}
             res = client.post(f'/posts/{self.post_id}/edit', data=data, follow_redirects=True)
             html = res.get_data(as_text=True)
 
