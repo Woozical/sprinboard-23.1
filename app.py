@@ -39,8 +39,32 @@ def tag_list_view():
 
 @app.route('/tags/<int:tag_id>')
 def tag_detail_view(tag_id):
-    tag = Tag.query.get(tag_id)
+    tag = Tag.query.get_or_404(tag_id)
     return render_template('tag-detail.html', tag=tag)
+
+@app.route('/tags/<int:tag_id>/edit', methods=['GET', 'POST'])
+def tag_edit_view(tag_id):
+    tag = Tag.query.get_or_404(tag_id)
+    if request.method == "GET":
+        return render_template('tag-edit.html', tag=tag)
+    elif request.method == "POST":
+        if request.form['tag-name']:
+            tag.name = request.form['tag-name'].lower()
+            db.session.add(tag)
+            try:
+                db.session.commit()
+            except:
+                flash('An error occured when saving tag. Try again later')
+        else:
+            flash('Tag names are required')
+        
+        return redirect(f'/tags/{tag_id}')
+
+@app.route('/tags/<int:tag_id>/delete', methods=['POST'])
+def tag_delete_submit(tag_id):
+    Tag.query.filter(Tag.id == tag_id).delete()
+    db.session.commit()
+    return redirect('/tags')
 
 @app.route('/users/new', methods=['GET'])
 def create_form_view():
@@ -181,7 +205,7 @@ def post_edit_submission(post_id):
             post.tags.append(tag)
 
     db.session.add(post)
-    
+
     try:
         db.session.commit()
     except:

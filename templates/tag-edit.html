@@ -3,20 +3,15 @@
 {% block title %}Tag - {{tag.name.title()}}{% endblock %}
 {% block content %}
 <div class="container view50">
+    <br>
     <div class="d-flex justify-content-between">
-    <h1 class="h1-center">{{tag.name.title()}}
-        <small class="text-muted">
-            ({{tag.post_count}})
-        </small>
-    </h1>
-    <div class="align-self-end">
-    <form action="">
-        <a class="btn btn-sm btn-primary" href="/tags/{{tag.id}}/edit">Edit</a>
-        <button class="btn btn-sm btn-danger"
-        formaction="/tags/{{tag.id}}/delete"
-        formmethod="POST">Delete</button>
-        <a class="btn btn-sm btn-outline-secondary" href="/tags">Return</a>
+    <form id="tag-edit-form">
+        <input class="form-control" type="text" name="tag-name" value="{{tag.name}}" size=10 maxlength=12>
     </form>
+    <div class="align-self-end">
+        <button form="tag-edit-form" formaction="/tags/{{tag.id}}/edit" formmethod="POST" class="btn btn-sm btn-success">Save</button>
+        <a class="btn btn-sm btn-secondary" href="/tags/{{tag.id}}">Cancel</a>
+        <a class="btn btn-sm btn-outline-secondary" href="/tags">Return</a>
     </div>
     </div>
     <hr>

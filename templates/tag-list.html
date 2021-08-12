@@ -11,16 +11,24 @@
     <li class="list-group-item d-flex justify-content-between align-items-center">
         <a class="no-decor" href="/tags/{{tag.id}}"><h4>{{tag.name}}</h4></a>
         <div class="ml-auto p-2">
-            <a class="btn btn-primary btn-sm" href="/tags/{{tag.id}}/edit">Edit</a>
-            <a class="btn btn-danger btn-sm" href="/tags/{{tag.id}}/delete">Delete</a>
+            <form>
+                <a class="btn btn-primary btn-sm" href="/tags/{{tag.id}}/edit">Edit</a>
+                <button class="btn btn-danger btn-sm"
+                formmethod="POST"
+                formaction="/tags/{{tag.id}}/delete">Delete</button>
+            </form>
         </div>
     </li>
     {% else %}
     <li class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center">
         <a class="no-decor" href="/tags/{{tag.id}}"><h4>{{tag.name}}</h4></a>
         <div class="ml-auto p-2">
-            <a class="btn btn-primary btn-sm" href="/tags/{{tag.id}}/edit">Edit</a>
-            <a class="btn btn-danger btn-sm" href="/tags/{{tag.id}}/delete">Delete</a>
+            <form>
+                <a class="btn btn-primary btn-sm" href="/tags/{{tag.id}}/edit">Edit</a>
+                <button class="btn btn-danger btn-sm"
+                formmethod="POST"
+                formaction="/tags/{{tag.id}}/delete">Delete</button>
+            </form>
         </div>
     </li>
     {% endif %}
@@ -30,4 +38,13 @@
 <script>
     document.getElementById("nav-tags").classList.add('active')
 </script>
+{% endblock %}
+
+{% block edit_and_delete %}
+<form>
+    <a class="btn btn-primary btn-sm" href="/tags/{{tag.id}}/edit">Edit</a>
+    <button class="btn btn-danger btn-sm"
+    formmethod="POST"
+    formaction="/tags/{{tag.id}}/delete">Delete</button>
+    </form>
 {% endblock %}
